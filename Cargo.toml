@@ -1,0 +1,15 @@
+[package]
+name = "phantom_persist_rs"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "phantom_persist_rs"
+path = "src/lib.rs"
+
+[[bin]]
+name = "phantom_persist_rs"
+path = "src/main.rs"
+
+[dependencies]
+winapi = { version = "0.3.9", features = ["winbase", "winerror", "winuser", "processthreadsapi", "securitybaseapi", "winnt", "libloaderapi", "errhandlingapi", "windef", "minwindef", "handleapi"] }
